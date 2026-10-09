@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учёт сотрудников</title>
+    <style>
+        *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#20283a}
+        header{background:#202b46;color:white;padding:25px max(20px,calc((100% - 1100px)/2))}
+        header h1{margin:0 0 7px;font-size:27px}header p{margin:0;color:#d7dfef}
+        main{max-width:1100px;margin:30px auto;padding:0 18px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+        h2{margin:0 0 18px}.btn{display:inline-block;border:0;border-radius:8px;padding:11px 15px;text-decoration:none;cursor:pointer;font-weight:bold;font-size:14px}
+        .primary{background:#4263eb;color:white}.light{background:#e9edff;color:#2d48bd}.danger{background:#ffe8e8;color:#b42318}
+        .filters,.table-wrap{background:white;border-radius:13px;padding:18px;margin-top:20px;box-shadow:0 5px 20px #1b2a4a0a}
+        .filters form{display:flex;gap:12px;flex-wrap:wrap}.filters input,.filters select{padding:11px;border:1px solid #d7ddeb;border-radius:8px;font-size:14px;flex:1;min-width:180px}
+        .message{padding:12px 15px;border-radius:8px;margin:15px 0}.success{background:#e3f8ec;color:#17663a}.error{background:#fff0f0;color:#a32020}
+        .table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:780px}th,td{text-align:left;padding:14px 12px;border-bottom:1px solid #edf0f5}
+        th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#65708a;background:#fafbfe}td{font-size:14px}
+        .status{display:inline-block;padding:5px 9px;border-radius:20px;font-size:12px;font-weight:bold}.on{background:#e0f7e9;color:#167343}.off{background:#f0f1f5;color:#667085}
+        .actions{display:flex;gap:7px;align-items:center}.actions .btn{padding:8px 10px}.empty{text-align:center;color:#68738a;padding:35px}
+        footer{text-align:center;padding:25px;color:#778198;font-size:13px}
+    </style>
+</head>
+<body>
+<header><h1>Учёт сотрудников</h1><p>Управление данными и статусом сотрудников организации</p></header>
+<main>
+    <div class="top"><h2>Список сотрудников</h2><a class="btn primary" th:href="@{/employees/add}">＋ Добавить сотрудника</a></div>
+    <div th:if="${successMessage}" class="message success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="message error" th:text="${errorMessage}"></div>
+    <section class="filters">
+        <form th:action="@{/employees}" method="get">
+            <input type="text" name="name" th:value="${name}" placeholder="Поиск по ФИО">
+            <select name="active">
+                <option value="all" th:selected="${active == 'all'}">Все сотрудники</option>
+                <option value="true" th:selected="${active == 'true'}">Только активные</option>
+                <option value="false" th:selected="${active == 'false'}">Только неактивные</option>
+            </select>
+            <button class="btn primary" type="submit">Найти</button>
+            <a class="btn light" th:href="@{/employees}">Сбросить</a>
+        </form>
+    </section>
+    <section class="table-wrap">
+        <table>
+            <thead><tr><th>ФИО</th><th>Email</th><th>Телефон</th><th>Должность</th><th>Зарплата</th><th>Статус</th><th>Действия</th></tr></thead>
+            <tbody>
+            <tr th:each="employee : ${employees}">
+                <td th:text="${employee.fullName}"></td>
+                <td th:text="${employee.email}"></td>
+                <td th:text="${employee.phone}"></td>
+                <td th:text="${employee.position}"></td>
+                <td th:text="${#numbers.formatDecimal(employee.salary, 1, 'COMMA', 2, 'POINT')} + ' ₽'"></td>
+                <td><span class="status" th:classappend="${employee.active} ? ' on' : ' off'" th:text="${employee.active} ? 'Активен' : 'Неактивен'"></span></td>
+                <td><div class="actions">
+                    <a class="btn light" th:href="@{/employees/edit/{id}(id=${employee.id})}">Изменить</a>
+                    <form th:action="@{/employees/delete/{id}(id=${employee.id})}" method="post" onsubmit="return confirm('Удалить сотрудника?')">
+                        <button class="btn danger" type="submit">Удалить</button>
+                    </form>
+                </div></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(employees)}"><td class="empty" colspan="7">Сотрудники не найдены. Попробуйте изменить параметры поиска.</td></tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+<footer>Практическая работа №2 · Приложение «Учёт сотрудников»</footer>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Сотрудник</title>
+    <style>
+        *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#20283a}
+        header{background:#202b46;color:white;padding:25px max(20px,calc((100% - 760px)/2))}header h1{margin:0 0 7px;font-size:26px}header p{margin:0;color:#d7dfef}
+        main{max-width:760px;margin:30px auto;padding:0 18px}.card{background:white;padding:25px;border-radius:14px;box-shadow:0 5px 20px #1b2a4a0a}
+        h2{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field{margin-bottom:17px}.field label{display:block;font-size:14px;font-weight:bold;margin-bottom:7px}
+        input{width:100%;padding:12px;border:1px solid #d7ddeb;border-radius:8px;font-size:15px}input:focus{outline:2px solid #c8d2ff;border-color:#4263eb}
+        .check{display:flex;align-items:center;gap:10px;margin:5px 0 22px}.check input{width:auto}.check label{margin:0}
+        .error{color:#b42318;font-size:13px;margin-top:6px}.invalid{border-color:#d92d20}.actions{display:flex;gap:10px;flex-wrap:wrap}
+        .btn{display:inline-block;border:0;border-radius:8px;padding:12px 16px;text-decoration:none;cursor:pointer;font-weight:bold;font-size:14px}.primary{background:#4263eb;color:white}.light{background:#e9edff;color:#2d48bd}
+        footer{text-align:center;padding:25px;color:#778198;font-size:13px}@media(max-width:600px){.grid{grid-template-columns:1fr}.card{padding:19px}}
+    </style>
+</head>
+<body>
+<header><h1>Учёт сотрудников</h1><p>Заполните информацию о сотруднике</p></header>
+<main>
+    <section class="card">
+        <h2 th:text="${pageTitle}">Сотрудник</h2>
+        <form th:object="${employee}" th:action="${formAction}" method="post">
+            <div class="field">
+                <label for="fullName">ФИО</label>
+                <input id="fullName" type="text" th:field="*{fullName}" th:classappend="${#fields.hasErrors('fullName')} ? ' invalid' : ''" placeholder="Иванов Иван Иванович">
+                <div class="error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+            </div>
+            <div class="grid">
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input id="email" type="email" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? ' invalid' : ''" placeholder="name@example.com">
+                    <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+                <div class="field">
+                    <label for="phone">Телефон</label>
+                    <input id="phone" type="tel" th:field="*{phone}" th:classappend="${#fields.hasErrors('phone')} ? ' invalid' : ''" placeholder="+7 (900) 123-45-67">
+                    <div class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                </div>
+                <div class="field">
+                    <label for="position">Должность</label>
+                    <input id="position" type="text" th:field="*{position}" th:classappend="${#fields.hasErrors('position')} ? ' invalid' : ''" placeholder="Менеджер">
+                    <div class="error" th:if="${#fields.hasErrors('position')}" th:errors="*{position}"></div>
+                </div>
+                <div class="field">
+                    <label for="salary">Зарплата, ₽</label>
+                    <input id="salary" type="number" min="0.01" step="0.01" th:field="*{salary}" th:classappend="${#fields.hasErrors('salary')} ? ' invalid' : ''" placeholder="65000">
+                    <div class="error" th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}"></div>
+                </div>
+            </div>
+            <div class="check">
+                <input id="active" type="checkbox" th:field="*{active}">
+                <label for="active">Сотрудник активен</label>
+            </div>
+            <div class="actions">
+                <button class="btn primary" type="submit">Сохранить</button>
+                <a class="btn light" th:href="@{/employees}">Отмена</a>
+            </div>
+        </form>
+    </section>
+</main>
+<footer>Практическая работа №2 · Приложение «Учёт сотрудников»</footer>
+</body>
+</html>
